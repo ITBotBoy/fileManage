@@ -1,1 +1,0 @@
-import{d as a,a5 as e,bh as r,j as t,a6 as n}from"./index.cefb3244.js";var s=a({name:"Redirect",setup(){const{currentRoute:a,replace:s}=e(),{getOpenPageLoading:i,getEnableTransition:o}=r(),{params:u,query:p}=t(a),{path:c}=u;return s({path:"/"+(Array.isArray(c)?c.join("/"):c),query:p}),t(o)&&t(i)&&setTimeout((()=>{n.setPageLoadingAction(!1)}),0),()=>null}});export{s as default};

@@ -1,1 +1,0 @@
-import{d as t,W as e,r as o,o as n,a as s}from"./index.cefb3244.js";import a from"./Exception.07ce3568.js";import"./usePage.84a5641a.js";var r=t({name:"LoadTimeout",components:{Exception:a},setup:()=>({ExceptionEnum:e})});r.render=function(t,e,a,r,i,p){const u=o("Exception");return n(),s(u,{status:t.ExceptionEnum.PAGE_TIMEOUT},null,8,["status"])};export{r as default};

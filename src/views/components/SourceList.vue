@@ -28,7 +28,7 @@
                     </div>
                 </a-checkbox>
                 <div class="buttonGroup">
-                    <a-button @click="copyPath(item.path)" size="small">
+                    <a-button @click="copyPath(`${protocol}${item.path}`)" size="small">
                         复制
                     </a-button>
                     <a-button @click="fileType[type].fun(index)" size="small">
@@ -62,11 +62,13 @@ import videoPng from '/@/assets/images/video.png'
 import audioPng from '/@/assets/images/audio.png'
 import { useCopyToClipboard } from '/@/hooks/web/useCopyToClipboard';
 import { message } from 'ant-design-vue';
+const protocol=window.location.protocol
 export default {
     name: "FileList",
     props: ['showFileList','gapGroup','type'],
     data(){
         return {
+            protocol,
             filePath:'',
             fileType:{
                 'txt':{

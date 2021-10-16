@@ -23,6 +23,40 @@ import store from '/@/store';
 const {globSetting} = useSetting();
 const prefix = globSetting.urlPrefix;
 const {createMessage, createErrorModal} = useMessage();
+const enhanceError = function enhanceError(error, config, code, request, response) {
+    error.config = config;
+    if (code) {
+        error.code = code;
+    }
+    
+    error.request = request;
+    error.response = response;
+    error.isAxiosError = true;
+    
+    error.toJSON = function toJSON() {
+        return {
+            // Standard
+            message: this.message,
+            name: this.name,
+            // Microsoft
+            description: this.description,
+            number: this.number,
+            // Mozilla
+            fileName: this.fileName,
+            lineNumber: this.lineNumber,
+            columnNumber: this.columnNumber,
+            stack: this.stack,
+            // Axios
+            config: this.config,
+            code: this.code
+        };
+    };
+    return error;
+};
+const createError = function createError(message, config, code, request, response) {
+    var error = new Error(message);
+    return enhanceError(error, config, code, request, response);
+};
 /**
  * @description: 数据处理，方便区分多种处理方式
  */
@@ -149,7 +183,14 @@ const transform: AxiosTransform = {
             )
         }
         if(res.status>=300){
-            return Promise.reject(res)
+            let response=res
+            return Promise.reject(createError(
+                'Request failed with status code ' + response.status,
+                response.config,
+                null,
+                response.request,
+                response
+            ));
         }
         return res;
     },
@@ -157,16 +198,9 @@ const transform: AxiosTransform = {
      * @description: 响应错误处理
      */
     responseInterceptorsCatch: async (error: any) => {
+        console.log(error)
         let {response={},message,config={}} = error || {};
         const {error_code, msg}=response.data || {};
-        console.log(JSON.stringify(config.requestOptions),'error_code')
-        if(error_code===10050){
-            let data=await defHttp.request(
-                {url:'/cms/user/refresh',method: 'get'},
-                {isTransformRequestResult: false}
-            )
-            store.commit('user/commitTokenState',[`Bearer ${data.access_token}`, `Bearer ${data.refresh_token}`])
-        }
         errorStore.setupErrorHandle(error);
         const err: string = error.toString();
         try {
